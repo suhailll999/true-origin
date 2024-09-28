@@ -4,17 +4,19 @@ import cookieParser from "cookie-parser";
 import userRoutes from './routes/user.route.js';
 import adminRoutes from './routes/admin.route.js';
 import authRoutes from './routes/auth.route.js';
+import dotenv from 'dotenv';
 
 const app = express();
 const port = 3000;
+
+dotenv.config();
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 
-mongoose.connect('mongodb+srv://ansa:1234@trueorigin.1aitw.mongodb.net/?retryWrites=true&w=majority&appName=trueorigin').then(() => {
+mongoose.connect(process.env.MONGO).then(() => {
     console.log('MongoDB Connected!');
-
 })
 
 app.use(express.json());
