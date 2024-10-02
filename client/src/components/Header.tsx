@@ -61,7 +61,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
               <Link to="/sign-in">Sign In</Link>
             </Button>
             <Button asChild variant={`${isDark ? 'secondary' : 'default'}`} >
-              <Link to="/sign-in">Sign Up</Link>
+              <Link to="/sign-up">Sign Up</Link>
             </Button>
           </div>
         )}

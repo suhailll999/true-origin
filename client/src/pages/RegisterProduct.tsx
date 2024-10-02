@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 // import { toast } from "@/components/ui/use-toast"
 
 // This is a placeholder function. In a real application, this would interact with the blockchain.
@@ -80,6 +81,7 @@ export default function RegisterProduct() {
         </Button>
       </form>
       </div>
+      <Footer/>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '@/components/Header'
 import { UserContext } from '@/context/userContext'
+import Footer from '@/components/Footer'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -100,6 +101,7 @@ export default function LoginPage() {
           </form>
         </Card>
       </section>
+      <Footer/>
     </div>
   )
 }

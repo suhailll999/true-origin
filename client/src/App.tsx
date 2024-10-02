@@ -7,6 +7,7 @@ import MainPage from "./pages/MainPage"
 import RegisterProduct from "./pages/RegisterProduct"
 import AboutPage from "./pages/AboutPage"
 import { UserProvider } from "./context/userContext"
+import { Toaster } from "./components/ui/toaster"
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/register" element={<RegisterProduct />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
+      <Toaster />
     </UserProvider>
   )
 }

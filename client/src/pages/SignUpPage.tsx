@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function SignUpPage() {
     const [name, setName] = useState('');
@@ -101,6 +102,7 @@ export default function SignUpPage() {
                     </form>
                 </Card>
             </section>
+            <Footer/>
         </div>
     );
 }

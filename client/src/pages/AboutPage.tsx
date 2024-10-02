@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Database, Shield, Search, Smartphone } from "lucide-react"
 import Header from "@/components/Header"
+import Footer from "@/components/Footer"
 
 export default function AboutPage() {
   return (
@@ -125,6 +126,7 @@ export default function AboutPage() {
           </AccordionItem>
         </Accordion>
       </div>
+      <Footer/>
     </div>
   )
 }

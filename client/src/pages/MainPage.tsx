@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ShieldCheck, PackagePlus } from "lucide-react"
 import Header from '@/components/Header'
 import { Link } from "react-router-dom"
+import Footer from "@/components/Footer"
 
 export default function MainPage() {
   return (
@@ -54,6 +55,7 @@ export default function MainPage() {
           </div>
         </div>
       </main>
+      <Footer/>
     </div>
   )
 }

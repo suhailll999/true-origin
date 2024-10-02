@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { QrCode } from "lucide-react"
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function VerificationPage() {
   const [serialNumber, setSerialNumber] = useState('');
@@ -50,6 +51,7 @@ export default function VerificationPage() {
           </form>
         </div>
       </main>
+      <Footer/>
     </div>
   )
 }
