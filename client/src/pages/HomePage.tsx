@@ -10,7 +10,7 @@ const HomePage = () => {
         <source type="video/mp4" src={bgVideo} />
       </video>
       {/* Header inside the video */}
-      <div className="absolute inset-0 z-10">
+      <div className="absolute inset-0">
         <Header theme="dark"/>
       </div>
       {/* Headline over the video */}

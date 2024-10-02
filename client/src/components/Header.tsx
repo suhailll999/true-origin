@@ -8,7 +8,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
     <header
       className={`w-full h-16 px-4 sm:px-6 lg:px-8 ${
         isDark ? "text-white" : "text-black"
-      } bg-transparent z-20 relative`}  // Ensure the header is on top
+      } bg-transparent z-20 relative`} 
     >
       <div className="container mx-auto h-full flex items-center justify-between">
         <Link to="/" className="text-2xl font-semibold">
