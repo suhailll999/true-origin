@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '@/components/Header'
+import { UserContext } from '@/context/userContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -12,13 +13,21 @@ export default function LoginPage() {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
+  
+  const userContext = useContext(UserContext);
+
+  // Handle case where UserContext might be undefined
+  if (!userContext) {
+    throw new Error('useContext must be used within a UserProvider');
+  }
+
+  const { login } = userContext; 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       setMessage('');
-
       const response = await fetch('/api/auth/user/sign-in', {
         method: 'POST',
         headers: {
@@ -37,6 +46,7 @@ export default function LoginPage() {
       const data = await response.json();
       setMessage(data.message);
       setIsSuccess(true);
+      login(data.user);
       setTimeout(() => {
         navigate('/');
       }, 3000);

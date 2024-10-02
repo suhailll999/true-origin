@@ -51,7 +51,7 @@ export const userSignIn = async (req, res) => {
                 name: existingUser.name,
                 email: existingUser.email
             }
-            return res.status(200).cookie("user", user).json({ message: "Sign In Success" });
+            return res.status(200).cookie("user", user).json({ message: "Sign In Success", user });
         } else {
             return res.status(400).json({ success: false, message: "Invalid email or password!" });
         }
