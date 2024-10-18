@@ -1,5 +1,6 @@
 import User from '../models/user.model.js';
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken";
 
 export const userSignUp = async (req, res) => {
     try {
@@ -46,12 +47,9 @@ export const userSignIn = async (req, res) => {
         const isCorrect = bcrypt.compareSync(password, existingUser.password);
 
         if (isCorrect) {
-            const user = {
-                id: existingUser._id,
-                name: existingUser.name,
-                email: existingUser.email
-            }
-            return res.status(200).cookie("user", user).json({ message: "Sign In Success", user });
+            const {password: pass, ...rest} = existingUser._doc;
+            const token = jwt.sign({id: existingUser._id}, process.env.JWT_SECRET, {expiresIn: "1h"});
+            return res.status(200).cookie("access_token", token).json({ message: "Sign In Success", user: rest});
         } else {
             return res.status(400).json({ success: false, message: "Invalid email or password!" });
         }
@@ -63,7 +61,7 @@ export const userSignIn = async (req, res) => {
 
 export const userSignOut = async (req, res) => {
     try {
-        res.clearCookie("user"); // Clears the "user" cookie set in the signIn function
+        res.clearCookie("access_token"); // Clears the "access_token" cookie set in the signIn function
         return res.status(200).json({ message: "Sign Out Success" });
     } catch (error) {
         return res.status(400).json({ success: false, error: error.message });
