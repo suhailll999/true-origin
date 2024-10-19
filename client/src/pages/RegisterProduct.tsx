@@ -47,8 +47,6 @@ export default function RegisterProduct() {
         variant: "default",
       });
 
-      // Reset the form after successful submission
-      event.currentTarget.reset();
 
     } catch (error: any) {
       console.error("Error:", error.message);
