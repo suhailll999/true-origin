@@ -50,7 +50,7 @@ export const userSignIn = async (req, res) => {
         if (isCorrect) {
             const { password: pass, ...rest } = existinguser._doc;
             const token = jwt.sign({ id: existinguser._id, role: "user" }, process.env.JWT_SECRET, { expiresIn: "1h" });
-            return res.status(200).cookie("access_token", token).json({ message: "Sign In Success", user: rest });
+            return res.status(200).cookie("access_token", token).json({success: true, message: "Sign In Success", user: rest });
         } else {
             return res.status(400).json({ success: false, message: "Invalid email or password!" });
         }
@@ -70,7 +70,7 @@ export const companySignUp = async (req, res) => {
         const existingCompany = await Company.findOne({ companyEmail });
 
         if (existingCompany) {
-            return res.status(400).json({ success: false, message: "User already exist!" });
+            return res.status(400).json({ success: false, message: "Company account already exist!" });
         }
 
         const hanshedPassword = bcrypt.hashSync(password, 10);

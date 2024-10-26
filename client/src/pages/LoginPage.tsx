@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Link, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/Layout';
-import { UserContext } from '@/context/userContext';
+import { useUser } from '@/context/userContext';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -15,15 +15,7 @@ export default function SignUpPage() {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
-
-  const userContext = useContext(UserContext);
-
-  // Handle case where UserContext might be undefined
-  if (!userContext) {
-    throw new Error('useContext must be used within a UserProvider');
-  }
-
-  const { login } = userContext;
+  const {login} = useUser();
 
 
   const companyLogin = async () => {
