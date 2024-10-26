@@ -16,7 +16,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
 
   const handleLogOut = async () => {
     try {
-      const res = await fetch('/api/auth/user/sign-out', {
+      const res = await fetch('/api/auth/sign-out', {
         method: 'POST',
       });
       if (res.ok) {

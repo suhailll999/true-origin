@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    name: {
+const CompanySchema = new mongoose.Schema({
+    companyName: {
         type: String,
         required: true
     },
-    email: {
+    companyEmail: {
         type: String,
         unique: true,
         required: true
@@ -16,6 +16,6 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-const User = mongoose.model("user", userSchema);
+const Company = mongoose.model("company", CompanySchema);
 
-export default User;
+export default Company;
