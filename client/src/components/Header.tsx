@@ -16,7 +16,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
 
   const handleLogOut = async () => {
     try {
-      const res = await fetch('/api/auth/user/sign-out', {
+      const res = await fetch('/api/auth/sign-out', {
         method: 'POST',
       });
       if (res.ok) {
@@ -48,7 +48,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
           </Link>
         </nav>
         {user ? (
-          <div className="flex w-1/4 justify-between items-center">
+          <div className="flex w-1/3 justify-between items-center">
             <p>Welcome <span className="font-semibold">{user.name}</span></p>
             <span className="font-semibold">{user.email}</span>
             <Button variant={`${isDark ? 'secondary' : 'default'}`} onClick={() => handleLogOut()} className={isDark ? "bg-white text-black" : "bg-black text-white"}>

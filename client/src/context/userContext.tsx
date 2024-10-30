@@ -12,6 +12,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  isAdmin?: boolean;
 }
 
 // Define the context's shape

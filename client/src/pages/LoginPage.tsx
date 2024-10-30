@@ -29,7 +29,7 @@ export default function LoginPage() {
 
     try {
       setMessage('');
-      const response = await fetch('/api/auth/user/sign-in', {
+      const response = await fetch('/api/auth/sign-in', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,13 @@ export default function LoginPage() {
               </Button>
               <span className="text-center">Don't have an account? <Link to={"/sign-up"} className="font-semibold text-blue-600">Sign Up</Link></span>
               {message && (
-                <span className={`${isSuccess ? 'bg-green-600' : 'bg-red-600'} 'w-80 mx-auto px-8 py-4 rounded-lg shadow-lg'`}>{message}</span>
+                <div
+                  className={`${
+                    isSuccess ? "text-green-600" : "text-red-600"
+                  } font-semibold`}
+                >
+                  {message}
+                </div>
               )}
             </CardFooter>
           </form>

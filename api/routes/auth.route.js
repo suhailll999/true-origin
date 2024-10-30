@@ -1,10 +1,10 @@
 import express from "express";
-import { userSignOut, userSignIn, userSignUp } from "../controllers/auth.controler.js";
+import { signIn, signOut, signUp,  } from "../controllers/auth.controler.js";
 
 const app = express();
 
-app.post('/user/sign-up', userSignUp);
-app.post('/user/sign-in', userSignIn);
-app.post('/user/sign-out', userSignOut);
+app.post('/sign-up', signUp);
+app.post('/sign-in', signIn);
+app.post('/sign-out', signOut);
 
 export default app;
