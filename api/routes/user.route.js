@@ -1,9 +1,21 @@
 import express from "express";
-import { getProduct } from "../controllers/user.controler.js";
+import {
+  addToCart,
+  checkout,
+  getCart,
+  getMyOrders,
+  getProduct,
+  getProducts,
+} from "../controllers/user.controler.js";
 import { verifyToken } from "../utils/index.js";
 
-const app=express()
+const router = express();
 
-app.get('/product/:productId', verifyToken, getProduct);
+router.get("/products", getProducts);
+router.get("/product/:productId", verifyToken, getProduct);
+router.post("/add-to-cart", verifyToken, addToCart);
+router.get("/cart", verifyToken, getCart);
+router.post("/order", verifyToken, checkout);
+router.get("/my-orders", verifyToken, getMyOrders);
 
-export default app;
+export default router;

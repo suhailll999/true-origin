@@ -7,7 +7,12 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     manufacturer: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    price: {
+      type: Number,
       required: true,
     },
     distributer: {
@@ -22,13 +27,13 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    expiryDate: {
+    expiringDate: {
       type: Date,
     },
   },
   { timestamps: true }
 );
 
-const Product = mongoose.model("product", ProductSchema);
+const Product = mongoose.model("Product", ProductSchema);
 
 export default Product;

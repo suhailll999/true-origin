@@ -21,8 +21,8 @@ export default function MainPage() {
           <h1 className="text-3xl font-bold mb-8 text-center">
             Welcome to Our Anti-Counterfeiting Platform
           </h1>
-          <div className="flex items-center justify-center">
-            {user && user.isAdmin ? (
+          <div className="h-3/4 flex items-center justify-center">
+            {user && user.role === "company" ||  user?.role === "admin"? (
               <Card className="flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">

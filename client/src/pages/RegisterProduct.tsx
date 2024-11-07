@@ -7,58 +7,71 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import Layout from '@/components/Layout'
 import { useToast } from '@/hooks/use-toast'
+import { useUser } from '@/context/userContext'
+import { useNavigate } from 'react-router-dom'
+
+interface ProductData {
+  productName: string;
+  manufacturer: string;
+  distributer: string;
+  manufacturingDate: string;
+  expiringDate: string;
+  description: string;
+}
 
 export default function RegisterProduct() {
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
+  const { toast } = useToast();
+  const { user } = useUser();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true);
-  
+
+    // Retrieve form data
     const formData = new FormData(event.currentTarget);
-    const productData = {
+    const productData: ProductData = {
       productName: formData.get("productName") as string,
-      manufacturer: formData.get("manufacturer") as string,
+      manufacturer: user?._id as string,
       distributer: formData.get("distributer") as string,
       manufacturingDate: formData.get("manufacturingDate") as string,
       expiringDate: formData.get("expiringDate") as string,
       description: formData.get("productDescription") as string,
     };
-  
+
     try {
+
       const response = await fetch("/api/company/add-product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productData),
       });
 
-      const result = await response.json();
-  
+      // Check if the response is ok
       if (!response.ok) {
+        const result = await response.json();
         throw new Error(result.message || "Failed to register product");
       }
 
-      console.log("Product registered:", result);
-  
+      const data = await response.json();
+      // Success toast
       toast({
         title: "Success",
-        description: "Product registered successfully!",
+        description: data.message,
         variant: "default",
       });
 
-      // Reset the form after successful submission
-      event.currentTarget.reset();
+      setTimeout(() => {
+        navigate(`/product/${data.newProduct._id}`);
+      }, 3000);
 
     } catch (error: any) {
       console.error("Error:", error.message);
+      // Error toast
       toast({
         title: "Error",
         description: error.message || "Failed to register product. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -70,10 +83,6 @@ export default function RegisterProduct() {
           <div>
             <Label htmlFor="productName">Product Name</Label>
             <Input id="productName" name="productName" required />
-          </div>
-          <div>
-            <Label htmlFor="manufacturer">Manufacturer</Label>
-            <Input id="manufacturer" name="manufacturer" required />
           </div>
           <div>
             <Label htmlFor="distributer">Distributer</Label>
@@ -91,8 +100,8 @@ export default function RegisterProduct() {
             <Label htmlFor="productDescription">Product Description</Label>
             <Textarea id="productDescription" name="productDescription" />
           </div>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Registering..." : "Register Product"}
+          <Button type="submit">
+            Register Product
           </Button>
         </form>
       </div>

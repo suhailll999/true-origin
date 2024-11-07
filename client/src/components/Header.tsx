@@ -10,33 +10,34 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
   const userContext = useContext(UserContext);
   // Handle case where UserContext might be undefined
   if (!userContext) {
-    throw new Error('useContext must be used within a UserProvider');
+    throw new Error("useContext must be used within a UserProvider");
   }
   const { user, logout } = userContext;
 
   const handleLogOut = async () => {
     try {
-      const res = await fetch('/api/auth/sign-out', {
-        method: 'POST',
+      const res = await fetch("/api/auth/sign-out", {
+        method: "POST",
       });
       if (res.ok) {
         logout();
-        navigate('/sign-in');
+        navigate("/sign-in");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   return (
     <header
-      className={`w-full h-16 px-4 sm:px-6 lg:px-8 ${isDark ? "text-white" : "text-black"
-        } bg-transparent z-20 relative`}
+      className={`w-full h-16 px-4 sm:px-6 lg:px-8 ${
+        isDark ? "text-white" : "text-black"
+      } bg-transparent z-20 relative`}
     >
       <div className="container mx-auto h-full flex items-center justify-between">
         <Link to="/" className="text-2xl font-semibold">
           True Origin
         </Link>
-        <nav className="hidden md:flex w-1/5 justify-around">
+        <nav className={`hidden md:flex ${user ? "w-1/2" : "w-1/4"} justify-around`}>
           <Link to="/home" className="text-sm font-medium hover:underline">
             Home
           </Link>
@@ -46,12 +47,51 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
           <Link to="/contact" className="text-sm font-medium hover:underline">
             Contact
           </Link>
+          {user && user.role === "company" ? (
+            <Link
+              to="/all-products"
+              className="text-sm font-medium hover:underline"
+            >
+              Our Products
+            </Link>
+          ) : (
+            user?.role === "consumer" && (
+              <>
+                <Link
+                  to="/products"
+                  className="text-sm font-medium hover:underline"
+                >
+                  All Products
+                </Link>
+                <Link
+                  to="/my-orders"
+                  className="text-sm font-medium hover:underline"
+                >
+                  Orders
+                </Link>
+                <Link
+                  to="/cart"
+                  className="text-sm font-medium hover:underline"
+                >
+                  Cart
+                </Link>
+              </>
+            )
+          )}
         </nav>
         {user ? (
           <div className="flex w-1/3 justify-between items-center">
-            <p>Welcome <span className="font-semibold">{user.name}</span></p>
-            <span className="font-semibold">{user.email}</span>
-            <Button variant={`${isDark ? 'secondary' : 'default'}`} onClick={() => handleLogOut()} className={isDark ? "bg-white text-black" : "bg-black text-white"}>
+            <p>
+              Welcome <span className="font-semibold">{user.name}</span>
+            </p>
+            <span className="capitalize px-2 rounded-md bg-blue-600 text-white">
+              {user.role}
+            </span>
+            <Button
+              variant={`${isDark ? "secondary" : "default"}`}
+              onClick={() => handleLogOut()}
+              className={isDark ? "bg-white text-black" : "bg-black text-white"}
+            >
               Sign Out
             </Button>
           </div>
@@ -60,7 +100,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
             <Button variant="ghost" asChild>
               <Link to="/sign-in">Sign In</Link>
             </Button>
-            <Button asChild variant={`${isDark ? 'secondary' : 'default'}`} >
+            <Button asChild variant={`${isDark ? "secondary" : "default"}`}>
               <Link to="/sign-up">Sign Up</Link>
             </Button>
           </div>

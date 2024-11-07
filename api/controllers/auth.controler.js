@@ -1,36 +1,82 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Cart from "../models/cart.model.js";
 
 export const signUp = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All feilds are required!" });
+    const role = req.query.role;
+
+    // Validate required fields
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required!",
+      });
     }
 
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters.",
+      });
+    }
+
+    // Validate role
+    const validRoles = ["company", "consumer"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role! Allowed roles: company, consumer",
+      });
+    }
+
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User already exist!" });
+      return res.status(400).json({
+        success: false,
+        message: "User already exists with this email.",
+      });
     }
 
-    const hanshedPassword = bcrypt.hashSync(password, 10);
+    // Hash password asynchronously
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
-      email,
+    // Create and save new user
+    const newUser = await User.create({
       name,
-      password: hanshedPassword,
+      email,
+      role,
+      password: hashedPassword,
     });
 
-    await newUser.save();
-    return res.json({ success: true, message: "New user created!", newUser });
+    if(role === 'consumer') {
+      Cart.create({
+        user: newUser._id,
+        products: [],
+        totalPrice: 0,
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "New user created successfully!",
+      user: {
+        id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error.message });
+    console.error("Error during user sign-up:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error. Please try again later.",
+    });
   }
 };
 
@@ -62,11 +108,12 @@ export const signIn = async (req, res) => {
     }
 
     // Destructure user data and exclude password
-    const { password: _, isAdmin = false, _id } = user._doc;
+    const { password: _, ...userData } = user._doc;
+    const { _id: id, role } = userData;
 
     // Generate JWT token
-    const token = jwt.sign({ id: _id, isAdmin }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    const token = jwt.sign({ id, role }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
     });
 
     // Set cookie and return response
@@ -79,7 +126,7 @@ export const signIn = async (req, res) => {
       .json({
         success: true,
         message: "Sign In Success",
-        user: { ...user._doc },
+        user: userData,
       });
   } catch (error) {
     res.status(500).json({

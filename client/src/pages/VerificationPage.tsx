@@ -11,7 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProductData {
   distributer: string;
-  manufacturer: string;
+  manufacturer: {
+    name: string;
+  };
   manufacturingDate: string;
   expiryDate?: string;
   productName: string;
@@ -42,7 +44,7 @@ function ProductDetails({ product }: { product: ProductData }) {
         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <dt className="font-medium text-gray-500">Manufacturer</dt>
-            <dd>{product.manufacturer}</dd>
+            <dd>{product.manufacturer.name}</dd>
           </div>
           <div>
             <dt className="font-medium text-gray-500">Distributer</dt>
