@@ -1,5 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import Order from "../models/order.model.js";
+import User from "../models/user.model.js";
 import ProductReport from "../models/productReport.model.js";
 import { errorHandler } from "../utils/index.js";
 
@@ -107,3 +108,58 @@ export const getAllReports = async (req, res, next) => {
     });
   }
 }
+
+
+export const getAllCompanies = async (req, res, next) => {
+  try {
+    // Fetch all orders from the database
+    const companies = await User.find({role: "company"}).select("-password").sort({createdAt: -1});
+
+    // If no orders are found, return a message
+    if (companies.length === 0) {
+      return res.status(404).json({ message: "No companies found" });
+    }
+
+    // Send the fetched orders as a response
+    res.status(200).json(companies);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error(error);
+
+    // Return a generic error response
+    res.status(500).json({
+      message: "Error fetching orders. Please try again later.",
+    });
+  }
+};
+
+export const updateAccountStatus = async (req, res, next) => {
+  try {
+    const {companyId, status} = req.query;
+    
+    if(!companyId || !status){
+      return next(errorHandler(400, "Company ID and Status is required!"));
+    }
+
+    if(!["pending", "approved", "rejected"].includes(status)){
+      return next(errorHandler(400, "Status must be pending, approved or rejected!"));
+    }
+
+    const updatedCompany = await User.findByIdAndUpdate(companyId, {accountStatus: status});
+
+    if(!updatedCompany){
+      return next(errorHandler(404, "Company is not found, May be deleted."));
+    }
+
+    res.status(200).json({success: true, message: `Company Account Status Updated to ${status}`});
+
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error(error);
+
+    // Return a generic error response
+    res.status(500).json({
+      message: "Error fetching orders. Please try again later.",
+    });
+  }
+};

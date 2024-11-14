@@ -13,6 +13,7 @@ interface User {
   name: string;
   email: string;
   role: "company" | "consumer" | "admin";
+  accountStatus: string;
 }
 
 // Define the context's shape

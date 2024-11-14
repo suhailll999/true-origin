@@ -3,6 +3,7 @@ import Product from "../models/product.model.js";
 import { errorHandler } from "../utils/index.js";
 
 export const addProduct = async (req, res, next) => {
+  console.log(req.body);
   try {
     const {
       productName,

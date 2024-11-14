@@ -16,6 +16,16 @@ export const signUp = async (req, res) => {
       });
     }
 
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
+    }
+
+    // Validate password length
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
@@ -52,8 +62,8 @@ export const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    if(role === 'consumer') {
-      Cart.create({
+    if (role === 'consumer') {
+      await Cart.create({
         user: newUser._id,
         products: [],
         totalPrice: 0,
@@ -79,6 +89,7 @@ export const signUp = async (req, res) => {
     });
   }
 };
+
 
 export const signIn = async (req, res) => {
   try {

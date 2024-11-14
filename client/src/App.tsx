@@ -22,6 +22,7 @@ import OrderDetailsPage from "./pages/OrderDetailsPage";
 import MyFakeProductReportsPage from "./pages/MyReportPage";
 import AllFakeProductReportsPage from "./pages/AllReportPage";
 import ContactPage from "./pages/ContactPage";
+import CompaniesPage from "./pages/CompaniesPage";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/all-orders" element={<AdminAllOrdersPage/>}/>
           <Route path="/order/:orderId" element={<OrderDetailsPage/>}/>
           <Route path="/all-reports" element={<AllFakeProductReportsPage/>}/>
+          <Route path="/companies" element={<CompaniesPage/>}/>
         </Route>
         <Route element={<CompanyRoute/>}>
           <Route path="/all-products" element={<AllProductsPage/>}/>
