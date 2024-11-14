@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Trash2, Plus, Minus, Loader } from "lucide-react";
+import { Trash2, Plus, Minus, Loader, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -144,7 +144,7 @@ export default function CartPage() {
         </div>
       ) : isLoading ? (
         <div className="flex justify-center items-center h-screen">
-          <Loader className="size-8 animate-spin"/>
+          <LoaderCircle className="size-8 animate-spin"/>
         </div>
       ) : (
         cartData?.products.length! > 0 ? (

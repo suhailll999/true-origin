@@ -27,6 +27,51 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
       console.log(error);
     }
   };
+
+  const consumerItems = [
+    {
+      title: "All Products",
+      url: "/products",
+    },
+    {
+      title: "My Reports",
+      url: "/my-reports",
+    },
+    {
+      title: "Orders",
+      url: "/my-orders",
+    },
+    {
+      title: "Cart",
+      url: "/cart",
+    },
+  ];
+
+  const companyItems = [
+    {
+      title: "Our Products",
+      url: "/all-products",
+    },
+  ];
+
+  const adminItems = [
+    {
+      title: "All Orders",
+      url: "/all-orders",
+    },
+    {
+      title: "All Reports",
+      url: "/all-reports",
+    },
+  ];
+
+  const items =
+    user?.role === "admin"
+      ? adminItems
+      : user?.role === "company"
+      ? companyItems
+      : consumerItems;
+
   return (
     <header
       className={`w-full h-16 px-4 sm:px-6 lg:px-8 ${
@@ -37,7 +82,7 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
         <Link to="/" className="text-2xl font-semibold">
           True Origin
         </Link>
-        <nav className={`hidden md:flex ${user ? "w-1/2" : "w-1/4"} justify-around`}>
+        <nav className="hidden md:flex gap-10">
           <Link to="/home" className="text-sm font-medium hover:underline">
             Home
           </Link>
@@ -47,42 +92,17 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
           <Link to="/contact" className="text-sm font-medium hover:underline">
             Contact
           </Link>
-          {user && user.role === "company" ? (
-            <Link
-              to="/all-products"
-              className="text-sm font-medium hover:underline"
-            >
-              Our Products
-            </Link>
-          ) : (
-            user?.role === "consumer" && (
-              <>
-                <Link
-                  to="/products"
-                  className="text-sm font-medium hover:underline"
-                >
-                  All Products
-                </Link>
-                <Link
-                  to="/my-orders"
-                  className="text-sm font-medium hover:underline"
-                >
-                  Orders
-                </Link>
-                <Link
-                  to="/cart"
-                  className="text-sm font-medium hover:underline"
-                >
-                  Cart
-                </Link>
-              </>
-            )
-          )}
+          {user &&
+            items.map(({ title, url }) => (
+              <Link key={title} className="text-sm font-medium hover:underline" to={url}>
+                {title}
+              </Link>
+            ))}
         </nav>
         {user ? (
           <div className="flex w-1/3 justify-between items-center">
             <p>
-              Welcome <span className="font-semibold">{user.name}</span>
+              Welcome <span className="font-semibold text-blue-600">{user.name}</span>
             </p>
             <span className="capitalize px-2 rounded-md bg-blue-600 text-white">
               {user.role}

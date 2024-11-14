@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { errorHandler } from "../utils/index.js";
 import Product from "../models/product.model.js";
 import Cart from "../models/cart.model.js";
 import Order from "../models/order.model.js";
+import Productreport from "../models/productReport.model.js";
 
 export const getProduct = async (req, res, next) => {
   try {
@@ -15,9 +16,11 @@ export const getProduct = async (req, res, next) => {
     }
     const product = await Product.findById(productId);
     if (!product) {
-      return next(errorHandler(400, "Product not found"));
+      return next(errorHandler(404, "Product not found"));
     }
-    res.status(200).json(product);
+    res
+      .status(200)
+      .json({ success: true, message: "Product Is Authentic", product });
   } catch (e) {
     return next(errorHandler(500, e.message));
   }
@@ -104,24 +107,26 @@ export const getCart = async (req, res) => {
     const userId = req.query.id || req.user.id;
 
     // Find the cart and populate the product details within each product entry
-    const cart = await Cart.findOne({ user: userId })
-      .populate({
-        path: "products.product", // Populate the 'product' field in each item in 'products' array
-        model: "Product", // Specify the model to use for population
-        select: "image productName"
-      });
+    const cart = await Cart.findOne({ user: userId }).populate({
+      path: "products.product", // Populate the 'product' field in each item in 'products' array
+      model: "Product", // Specify the model to use for population
+      select: "image productName",
+    });
 
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found for the specified user" });
+      return res
+        .status(404)
+        .json({ message: "Cart not found for the specified user" });
     }
 
     res.status(200).json(cart);
   } catch (error) {
     console.error("Error fetching cart:", error);
-    res.status(500).json({ message: "An error occurred while retrieving the cart" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while retrieving the cart" });
   }
 };
-
 
 export const checkout = async (req, res) => {
   try {
@@ -129,14 +134,16 @@ export const checkout = async (req, res) => {
     const { name, phoneNumber, pincode, address } = req.body;
 
     // Find the user's cart
-    const cart = await Cart.findOne({ user: userId }).populate("products.product");
+    const cart = await Cart.findOne({ user: userId }).populate(
+      "products.product"
+    );
 
     if (!cart || cart.products.length === 0) {
       return res.status(404).json({ message: "Cart is empty or not found" });
     }
 
     // Prepare the products array for the order
-    const products = cart.products.map(item => ({
+    const products = cart.products.map((item) => ({
       product: item.product._id, // Reference to the product
       quantity: item.quantity,
       price: item.price,
@@ -160,7 +167,9 @@ export const checkout = async (req, res) => {
     // Clear the cart after successful checkout
     await Cart.findByIdAndUpdate(cart._id, { products: [], totalPrice: 0 });
 
-    res.status(201).json({ message: "Order placed successfully", orderId: newOrder._id });
+    res
+      .status(201)
+      .json({ message: "Order placed successfully", orderId: newOrder._id });
   } catch (error) {
     console.error("Error during checkout:", error);
     res.status(500).json({ message: "An error occurred during checkout" });
@@ -176,7 +185,7 @@ export const getMyOrders = async (req, res) => {
       .populate({
         path: "products.product", // Populate each product within the order's products array
         model: "Product", // Reference to the Product model
-        select: "productName image price" // Only select necessary fields from Product
+        select: "productName image price", // Only select necessary fields from Product
       })
       .sort({ createdAt: -1 }); // Sort orders by most recent
 
@@ -187,6 +196,53 @@ export const getMyOrders = async (req, res) => {
     res.status(200).json(orders);
   } catch (error) {
     console.error("Error fetching orders:", error);
-    res.status(500).json({ message: "An error occurred while fetching orders" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching orders" });
+  }
+};
+
+export const submitReport = async (req, res, next) => {
+  try {
+    const { productName, productDescription, productId, userId } = req.body;
+
+    if (!productName || !userId || !productDescription || !productId) {
+      return next(errorHandler(400, "All fields are required!"));
+    }
+
+    Productreport.create({
+      productId,
+      userId,
+      productName,
+      productDescription,
+    });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Your report has been submitted." });
+  } catch (error) {
+    console.log(error);
+    next(errorHandler(error.status, error.message));
+  }
+};
+
+export const getMyReports = async (req, res, next) => {
+  try {
+    const { userId } = req.query;
+
+    if(userId && !isValidObjectId(userId)) {
+      return next(errorHandler(400, "User ID is invalid."));
+    }
+
+    const reports = await Productreport.find({ userId: userId || req.user.id }).sort({createdAt: -1});
+
+    if (!reports) {
+      return next(errorHandler(400, "No reports found"));
+    }
+
+    res.status(200).json({ success: true, reports });
+  } catch (error) {
+    console.log(error);
+    next(errorHandler(error.status, error.message));
   }
 };

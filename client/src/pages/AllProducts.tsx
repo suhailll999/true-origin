@@ -8,9 +8,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Info, ShoppingCart } from "lucide-react";
+import { Loader2, Info, ShoppingCart, LoaderCircle } from "lucide-react";
 import Layout from "@/components/Layout";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 
 interface Product {
@@ -51,59 +57,42 @@ export default function UserProducts() {
     }
   };
 
-  const handleProductClick = (productId: string) => {
-    navigate(`/product/${productId}`);
-  };
+  // const handleProductClick = (productId: string) => {
+  //   navigate(`/product/${productId}`);
+  // };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
 
   const addToCart = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const formData = new FormData(e.currentTarget);
       const userData = {
-        productId: formData.get('productId'),
-        quantity: formData.get('quantity'),
-      }
+        productId: formData.get("productId"),
+        quantity: formData.get("quantity"),
+      };
 
       const res = await fetch("/api/user/add-to-cart", {
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify({...userData})
+        body: JSON.stringify({ ...userData }),
       });
 
       const data = await res.json();
 
-      if(!res.ok){
+      if (!res.ok) {
         toast({
           title: "Failed to add product to cart!",
           description: data.message,
-          variant: "destructive"
-        })
+          variant: "destructive",
+        });
         return;
       }
 
       toast({
         title: "Product added successfully",
-      })
-
-
+      });
     } catch (error) {
       console.log(error);
     }
@@ -112,45 +101,64 @@ export default function UserProducts() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <Card key={product._id} className="py-4">
-              <CardContent className="flex flex-col gap-3">
-                <div className="flex items-center justify-center w-[250px] h-[350px] mx-auto">
-                  <img
-                    src={product.image}
-                    alt={product.productName}
-                    className="object-contain"
-                  />
-                </div>
-                <p className="text-xl font-semibold text-center">
-                  {product.productName}
-                </p>
-                <p className="text-xl">₹ 399.00</p>
-              </CardContent>
-              <CardFooter>
-                <form className="flex justify-between w-10/12 mx-auto" onSubmit={addToCart}>
-                  <Select name="quantity" defaultValue="1">
-                    <SelectTrigger className="w-1/3">
-                      <SelectValue placeholder="Quantity"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="4">4</SelectItem>
-                      <SelectItem value="5">5</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <input type="hidden" name="productId" value={product._id} />
-                  <Button className="w-1/3" type="submit" variant="default">
-                    <ShoppingCart className="mr-2" /> Add to cart
-                  </Button>
-                </form>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        {loading ? (
+          <div className="size-full flex justify-center items-center">
+            <LoaderCircle className="size-8 animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="size-full flex justify-center items-center">
+            <p className="text-red-500">{error}</p>
+          </div>
+        ) : (
+          products && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product) => (
+                <Card key={product._id} className="py-4">
+                  <CardContent className="flex flex-col gap-3">
+                    <div className="flex items-center justify-center w-[250px] h-[350px] mx-auto">
+                      <img
+                        src={product.image}
+                        alt={product.productName}
+                        className="object-contain"
+                      />
+                    </div>
+                    <p className="text-xl font-semibold text-center">
+                      {product.productName}
+                    </p>
+                    <p className="text-xl">₹ 399.00</p>
+                  </CardContent>
+                  <CardFooter>
+                    <form
+                      className="flex justify-between w-10/12 mx-auto"
+                      onSubmit={addToCart}
+                    >
+                      <Select name="quantity" defaultValue="1">
+                        <SelectTrigger className="w-1/3">
+                          <SelectValue placeholder="Quantity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1</SelectItem>
+                          <SelectItem value="2">2</SelectItem>
+                          <SelectItem value="3">3</SelectItem>
+                          <SelectItem value="4">4</SelectItem>
+                          <SelectItem value="5">5</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <input
+                        type="hidden"
+                        name="productId"
+                        value={product._id}
+                      />
+                      <Button className="w-1/3" type="submit" variant="default">
+                        <ShoppingCart className="mr-2" /> Add to cart
+                      </Button>
+                    </form>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )
+        )}
       </div>
     </Layout>
   );

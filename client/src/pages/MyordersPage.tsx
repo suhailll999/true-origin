@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { AlertCircle, Loader } from "lucide-react";
+import { AlertCircle, Loader, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -73,7 +73,7 @@ export default function MyOrdersPage() {
     <Layout>
       {isLoading ? (
         <div className="h-full w-full flex items-center justify-center">
-          <Loader className="h-12 w-12 animate-spin" />
+          <LoaderCircle className="size-8 animate-spin" />
         </div>
       ) : error ? (
         <Alert variant="destructive" className="max-w-md mx-auto mt-8">

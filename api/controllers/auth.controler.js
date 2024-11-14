@@ -112,9 +112,7 @@ export const signIn = async (req, res) => {
     const { _id: id, role } = userData;
 
     // Generate JWT token
-    const token = jwt.sign({ id, role }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign({ id, role }, process.env.JWT_SECRET);
 
     // Set cookie and return response
     res
