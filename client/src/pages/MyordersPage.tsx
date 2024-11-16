@@ -60,7 +60,9 @@ export default function MyOrdersPage() {
         const data: Order[] = await response.json();
         setOrders(data);
       } catch (err: any) {
-        setError(err.message || "Error fetching orders. Please try again later.");
+        setError(
+          err.message || "Error fetching orders. Please try again later."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -99,13 +101,17 @@ export default function MyOrdersPage() {
                 <CardHeader>
                   <CardTitle>Order #{order._id}</CardTitle>
                   <CardDescription>
-                    Placed on {format(new Date(order.createdAt), "MMMM d, yyyy")}
+                    Placed on{" "}
+                    {format(new Date(order.createdAt), "MMMM d, yyyy")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {order.products.map((item) => (
-                      <div key={item._id} className="flex items-center space-x-4">
+                      <div
+                        key={item._id}
+                        className="flex items-center space-x-4"
+                      >
                         <img
                           src={item.product.image}
                           alt={item.product.productName}
@@ -116,7 +122,8 @@ export default function MyOrdersPage() {
                             {item.product.productName}
                           </h3>
                           <p className="text-sm text-gray-500">
-                            Quantity: {item.quantity} | Price: ${item.price.toFixed(2)}
+                            Quantity: {item.quantity} | Price: ₹
+                            {item.price.toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -125,7 +132,9 @@ export default function MyOrdersPage() {
                   <Separator className="my-4" />
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Total Price:</span>
-                    <span className="font-bold">${order.totalPrice.toFixed(2)}</span>
+                    <span className="font-bold">
+                      ₹{order.totalPrice.toFixed(2)}
+                    </span>
                   </div>
                   <div className="mt-4 space-y-2">
                     <div className="flex justify-between items-center">
@@ -146,7 +155,9 @@ export default function MyOrdersPage() {
                       <Badge
                         className="capitalize"
                         variant={
-                          order.paymentStatus === "paid" ? "default" : "destructive"
+                          order.paymentStatus === "paid"
+                            ? "default"
+                            : "destructive"
                         }
                       >
                         {order.paymentStatus}

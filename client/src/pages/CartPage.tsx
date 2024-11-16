@@ -54,78 +54,80 @@ export default function CartPage() {
     fetchCartData();
   }, []);
 
-  const handleQuantityChange = async (itemId: string, change: number) => {
-    if (!cartData) return;
+  console.log(cartData);
 
-    const updatedProducts = cartData.products.map((item) => {
-      if (item._id === itemId) {
-        const newQuantity = Math.max(1, item.quantity + change);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
+  // const handleQuantityChange = async (itemId: string, change: number) => {
+  //   if (!cartData) return;
 
-    const updatedCartData = { ...cartData, products: updatedProducts };
-    setCartData(updatedCartData);
+  //   const updatedProducts = cartData.products.map((item) => {
+  //     if (item._id === itemId) {
+  //       const newQuantity = Math.max(1, item.quantity + change);
+  //       return { ...item, quantity: newQuantity };
+  //     }
+  //     return item;
+  //   });
 
-    // Update the total price
-    const newTotalPrice = updatedProducts.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-    updatedCartData.totalPrice = newTotalPrice;
+  //   const updatedCartData = { ...cartData, products: updatedProducts };
+  //   setCartData(updatedCartData);
 
-    // API call to update cart on the server
-    try {
-      const response = await fetch(`/api/user/cart/${cartData._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedCartData),
-      });
+  //   // Update the total price
+  //   const newTotalPrice = updatedProducts.reduce(
+  //     (total, item) => total + item.price * item.quantity,
+  //     0
+  //   );
+  //   updatedCartData.totalPrice = newTotalPrice;
 
-      if (!response.ok) {
-        throw new Error("Failed to update cart");
-      }
-    } catch (err) {
-      setError("Error updating cart data.");
-    }
-  };
+  //   // API call to update cart on the server
+  //   try {
+  //     const response = await fetch(`/api/user/cart/${cartData._id}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(updatedCartData),
+  //     });
 
-  const handleRemoveItem = async (itemId: string) => {
-    if (!cartData) return;
+  //     if (!response.ok) {
+  //       throw new Error("Failed to update cart");
+  //     }
+  //   } catch (err) {
+  //     setError("Error updating cart data.");
+  //   }
+  // };
 
-    const updatedProducts = cartData.products.filter(
-      (item) => item._id !== itemId
-    );
-    const updatedCartData = { ...cartData, products: updatedProducts };
-    setCartData(updatedCartData);
+  // const handleRemoveItem = async (itemId: string) => {
+  //   if (!cartData) return;
 
-    // Update the total price
-    const newTotalPrice = updatedProducts.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-    updatedCartData.totalPrice = newTotalPrice;
+  //   const updatedProducts = cartData.products.filter(
+  //     (item) => item._id !== itemId
+  //   );
+  //   const updatedCartData = { ...cartData, products: updatedProducts };
+  //   setCartData(updatedCartData);
 
-    // API call to remove item from the cart on the server
-    try {
-      const response = await fetch(`/api/user/cart/${cartData._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedCartData),
-      });
+  //   // Update the total price
+  //   const newTotalPrice = updatedProducts.reduce(
+  //     (total, item) => total + item.price * item.quantity,
+  //     0
+  //   );
+  //   updatedCartData.totalPrice = newTotalPrice;
 
-      if (!response.ok) {
-        throw new Error("Failed to update cart");
-      }
-    } catch (err) {
-      setError("Error removing item from cart.");
-    }
-  };
+  //   // API call to remove item from the cart on the server
+  //   try {
+  //     const response = await fetch(`/api/user/cart/${cartData._id}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(updatedCartData),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to update cart");
+  //     }
+  //   } catch (err) {
+  //     setError("Error removing item from cart.");
+  //   }
+  // };
 
   const totalPrice = useMemo(
     () =>
@@ -135,6 +137,8 @@ export default function CartPage() {
       ) ?? 0,
     [cartData?.products]
   );
+
+
 
   return (
     <Layout>
@@ -164,12 +168,12 @@ export default function CartPage() {
                         <h3 className="text-lg font-semibold">
                           {item.product.productName}
                         </h3>
-                        <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                        <p className="text-gray-600">₹{item.price.toFixed(2)}</p>
                         <div className="flex items-center mt-2">
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleQuantityChange(item._id, -1)}
+                            // onClick={() => handleQuantityChange(item._id, -1)}
                           >
                             <Minus className="h-4 w-4" />
                           </Button>
@@ -177,7 +181,7 @@ export default function CartPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleQuantityChange(item._id, 1)}
+                            // onClick={() => handleQuantityChange(item._id, 1)}
                           >
                             <Plus className="h-4 w-4" />
                           </Button>
@@ -185,7 +189,7 @@ export default function CartPage() {
                       </div>
                       <Button
                         variant="ghost"
-                        onClick={() => handleRemoveItem(item._id)}
+                        // onClick={() => handleRemoveItem(item._id)}
                       >
                         <Trash2 className="h-5 w-5 text-red-500" />
                       </Button>
@@ -199,7 +203,7 @@ export default function CartPage() {
                     <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
                     <div className="flex justify-between mb-2">
                       <span>Subtotal</span>
-                      <span>${totalPrice.toFixed(2)}</span>
+                      <span>₹{totalPrice.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span>Shipping</span>

@@ -59,6 +59,9 @@ const OrderSchema = new mongoose.Schema(
       enum: ["unpaid", "paid", "refunded"],
       default: "unpaid",
     },
+    paymentIntentId: {
+      type: String
+    }
   },
   { timestamps: true }
 );

@@ -4,6 +4,9 @@ import Product from "../models/product.model.js";
 import Cart from "../models/cart.model.js";
 import Order from "../models/order.model.js";
 import Productreport from "../models/productReport.model.js";
+import Stripe from "stripe"
+
+const stripe = new Stripe("sk_test_51QLHAuSJkaLKYIXLaNFVvkPc42nlw4Gl9fnFzLlOkaotV87fbfMTiZlkyfRSVCufNxGMTcvYWcrul3i2uU4OgJ8n00JOYWp9Bz");
 
 export const getProduct = async (req, res, next) => {
   try {
@@ -130,7 +133,7 @@ export const getCart = async (req, res) => {
 
 export const checkout = async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming `user` is attached to `req` after authentication
+    const userId = req.user.id;
     const { name, phoneNumber, pincode, address } = req.body;
 
     // Find the user's cart
@@ -149,6 +152,28 @@ export const checkout = async (req, res) => {
       price: item.price,
     }));
 
+    // Calculate the total amount
+    const totalAmount = cart.products.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    // Create a description for the payment intent
+    const description = products
+      .map(
+        (item) =>
+          `${item.product.name} (x${item.quantity}) - ₹${item.price * item.quantity}`
+      )
+      .join(", ");
+
+    // Create a Stripe PaymentIntent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalAmount * 100, // Convert to cents
+      currency: "INR", // Change currency as per your needs
+      description, // Add a meaningful description for export compliance
+      metadata: { userId, cartId: cart._id.toString() },
+    });
+
     // Create a new order with the cart's details and copied products
     const newOrder = new Order({
       products, // Adding products from the cart to the order
@@ -158,7 +183,8 @@ export const checkout = async (req, res) => {
       pincode,
       address,
       deliveryStatus: "not dispatched",
-      paymentStatus: "unpaid",
+      paymentStatus: "unpaid", // Initially unpaid
+      paymentIntentId: paymentIntent.id, // Save the PaymentIntent ID
     });
 
     // Save the new order
@@ -167,14 +193,17 @@ export const checkout = async (req, res) => {
     // Clear the cart after successful checkout
     await Cart.findByIdAndUpdate(cart._id, { products: [], totalPrice: 0 });
 
-    res
-      .status(201)
-      .json({ message: "Order placed successfully", orderId: newOrder._id });
+    res.status(201).json({
+      message: "Order placed successfully. Proceed to payment.",
+      orderId: newOrder._id,
+      clientSecret: paymentIntent.client_secret, // Send the clientSecret to the frontend for payment
+    });
   } catch (error) {
     console.error("Error during checkout:", error);
     res.status(500).json({ message: "An error occurred during checkout" });
   }
 };
+
 
 export const getMyOrders = async (req, res) => {
   try {
@@ -246,3 +275,32 @@ export const getMyReports = async (req, res, next) => {
     next(errorHandler(error.status, error.message));
   }
 };
+
+
+export const createPaymentIntent = async (req, res) => {
+  try {
+    // Get the items and amount from the request body
+    const cart = await Cart.findOne({user: req.user.id});
+
+    const totalAmount  = cart.totalPrice;
+
+    console.log(totalAmount);
+
+    // Create a PaymentIntent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalAmount, // Amount in cents
+      currency: "usd", // Change this to the currency you want
+      payment_method_types: ["card",], // Support card payments
+    });
+
+    // Return the clientSecret to the client
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+      // Optional: Add additional debug information for testing
+      dpmCheckerLink: `https://dashboard.stripe.com/test/payments/${paymentIntent.id}`,
+    });
+  } catch (error) {
+    console.error("Error creating payment intent:", error);
+    res.status(500).json({ error: error.message });
+  }
+}

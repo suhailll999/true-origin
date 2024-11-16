@@ -16,6 +16,7 @@ interface User {
   accountStatus: string;
 }
 
+
 // Define the context's shape
 export interface UserContextType {
   user: User | null;

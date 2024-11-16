@@ -30,6 +30,7 @@ interface Product {
   createdAt: string;
   updatedAt: string;
   image: string;
+  price: string;
 }
 
 export default function UserProducts() {
@@ -125,7 +126,7 @@ export default function UserProducts() {
                     <p className="text-xl font-semibold text-center">
                       {product.productName}
                     </p>
-                    <p className="text-xl">₹ 399.00</p>
+                    <p className="text-xl">₹{product.price}</p>
                   </CardContent>
                   <CardFooter>
                     <form

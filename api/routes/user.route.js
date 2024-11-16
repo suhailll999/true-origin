@@ -2,6 +2,7 @@ import express from "express";
 import {
   addToCart,
   checkout,
+  createPaymentIntent,
   getCart,
   getMyOrders,
   getMyReports,
@@ -18,6 +19,7 @@ router.get("/product/:productId", verifyToken, getProduct);
 router.post("/add-to-cart", verifyToken, addToCart);
 router.get("/cart", verifyToken, getCart);
 router.post("/order", verifyToken, checkout);
+router.post("/create-payment-intent", verifyToken, createPaymentIntent);
 router.get("/my-orders", verifyToken, getMyOrders);
 router.post("/report-product", verifyToken, submitReport);
 router.get("/my-reports", verifyToken, getMyReports);
