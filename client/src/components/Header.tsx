@@ -63,6 +63,10 @@ const Header = ({ theme = "light" }: { theme?: "light" | "dark" }) => {
       title: "All Reports",
       url: "/all-reports",
     },
+    {
+      title: "All Companies",
+      url: "/companies",
+    },
   ];
 
   const items =
