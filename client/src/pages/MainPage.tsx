@@ -7,8 +7,18 @@ import { useUser } from "@/context/userContext";
 
 export default function MainPage() {
   const { user } = useUser();
-  const isCompanyApproved = user?.role === "company" && user.accountStatus === "approved";
+
+  // Default value for isApproved to prevent issues when user is undefined
+  let isApproved = false;
+
+  // Only companies can have an approval status, consumers are always considered approved
+  if (user?.role === "company") {
+    isApproved = user.accountStatus === "approved";
+  }
+
   const isAdmin = user?.role === "admin";
+
+  console.log(user)
 
   return (
     <Layout>
@@ -16,9 +26,9 @@ export default function MainPage() {
         <div className="w-full h-full max-w-4xl text-center">
           <h1 className="text-3xl font-bold mb-8">Welcome to Our Anti-Counterfeiting Platform</h1>
           <div className="flex items-center justify-center h-3/4">
-            {isCompanyApproved || isAdmin ? (
+            {isApproved || isAdmin ? (
               <ProductRegistrationCard />
-            ) : user?.accountStatus === "pending" ? (
+            ) : user?.role === "company" && user?.accountStatus === "pending" ? (
               <StatusMessage message="Your Account Is Pending" />
             ) : user?.accountStatus === "rejected" ? (
               <StatusMessage message="Your Account Is Rejected" />
@@ -81,7 +91,7 @@ function ProductVerificationCard() {
   );
 }
 
-function StatusMessage({ message }: {message: string}) {
+function StatusMessage({ message }: { message: string }) {
   return (
     <div className="">
       <h2 className="text-2xl font-semibold">{message}</h2>
